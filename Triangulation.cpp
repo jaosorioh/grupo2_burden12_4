@@ -1,72 +1,99 @@
 #include <iostream>
-#include <cmath> 
+#include <cmath>
 #include <iomanip>
 #include <cstdlib>
-#include <fstream> 
+#include <fstream>
 #include "include/Triangulation.h"
 
 using namespace std;
 
-Triangulation::Triangulation(vector<Point> nodes_) {
-	setNodes(nodes_);
-}
-
-void Triangulation::setNodes(vector<Point> nodes_)
+Triangulation::Triangulation()
 {
-	nodes = nodes_;
+    triangles = new vector<Triangle>;
 }
 
-vector<Point> Triangulation::getNodes() const
+Triangulation::Triangulation(const char* fname)
 {
-	return nodes;
+    triangles = new vector<Triangle>;
+    setTriangles(triangles);
+    loadTriangles(fname);
 }
 
-
-void Triangulation::buildTriangles()
+Triangulation::~Triangulation()
 {
-	
-for(int i = 0; i<nodes.size()-1; i++)
+    delete triangles;
+}
+
+vector<Triangle>* Triangulation::getTriangles() const
 {
-	for(int j = 0; j<nodes.size()-1; j++)
-	{
-		Point p1;
-		p1.x = nodes[i].x;
-		p1.y = nodes[j].y;
-		
-		if((nodes[i].y>=nodes[j].y) && (nodes[i+1].y>=nodes[j].y) && (nodes[i+1].y>=nodes[j+1].y))
-		{			
-			Point p2;
-			p2.x = nodes[i+1].x;
-			p2.y = nodes[j].y;
-			
-			Point p3;
-			p3.x = nodes[i+1].x;
-			p3.y = nodes[j+1].y;
-			
-			Triangle t(p1, p2, p3);
-			
-			triangles.push_back(t);
-		}
-	}
+    return triangles;
 }
 
+void Triangulation::setTriangles(vector<Triangle>* triangles_)
+{
+    triangles = triangles_;
 }
 
-void Triangulation::saveFile(string triangsFname)
+void Triangulation::loadTriangles(const char* fname)
+{
+    ifstream triangsFile(fname);
+
+    if (triangsFile.fail()) {
+        cout << "Triangles file cannot be opened." << endl;
+        exit(1);
+    }
+
+    while (!triangsFile.eof()) {
+        Point p1;
+        Point p2;
+        Point p3;
+
+        triangsFile >> p1.x >> p1.y >> p2.x >> p2.y >> p3.x >> p3.y;
+        Triangle t(p1, p2, p3);
+        getTriangles()->push_back(t);
+    }
+
+    triangsFile.close();
+}
+
+void Triangulation::buildTriangles(vector<Point>* nodes)
 {
 
-ofstream triangsFile("triangles.dat");
+    for (int i = 0; i < nodes->size() - 1; i++) {
+        cout << nodes->at(i).y << endl;
+        for (int j = 0; j < nodes->size() - 1; j++) {
 
-if ( triangsFile.fail() )      
+            if ((nodes->at(i).y >= nodes->at(j).y) && (nodes->at(i + 1).y >= nodes->at(j).y) && (nodes->at(i + 1).y >= nodes->at(j + 1).y)) {
+                Point p1;
+                p1.x = nodes->at(i).x;
+                p1.y = nodes->at(j).y;
+
+                Point p2;
+                p2.x = nodes->at(i + 1).x;
+                p2.y = nodes->at(j).y;
+
+                Point p3;
+                p3.x = nodes->at(i + 1).x;
+                p3.y = nodes->at(j + 1).y;
+
+                Triangle t(p1, p2, p3);
+                getTriangles()->push_back(t);
+            }
+        }
+    }
+}
+
+void Triangulation::saveFile(const char* fname)
 {
-      cout << "Mesh file cannot be opened" << endl;
-      exit( 1 );
-}
+    ofstream triangsFile(fname);
 
-for(int i=0; i<triangles.size();i++)
-{
-	triangsFile << triangles[i].toTuples() << endl;
-}
-triangsFile.close();
-}
+    if (triangsFile.fail()) {
+        cout << "Triangles file cannot be saved." << endl;
+        exit(1);
+    }
 
+    for (int i = 0; i < triangles->size(); i++) {
+        triangsFile << getTriangles()->at(i).toTuples() << endl;
+    }
+    triangsFile.close();
+}
