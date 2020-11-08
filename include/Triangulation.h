@@ -1,24 +1,19 @@
 #ifndef TRIANGULATION_H
 #define TRIANGULATION_H
 
-#include <vector>
-#include "global.h"
+#include "Triangle.h"
 
 using namespace std;
 
 class Triangulation {
 public:
-    Triangulation();
-    Triangulation(const char*);
-    ~Triangulation();
-    vector<Triangle>* getTriangles() const;
-    void setTriangles(vector<Triangle>*);
-    void loadTriangles(const char*);
-    void buildTriangles(vector<Point>*);
-    void saveFile(const char*);
+    void linspace(double &, double &, int &, bool &, vector<double> &); 
+    void multi_linspace(vector < double > &, int &, vector < double > &);
+    void loadNodes(vector<Point> &, const string &);
+    void saveNodes(vector<Point> &, const string &);
+    void saveTriangles(vector<Triangle> &, const string &);
+    void buildTrianglesAndNodes(vector<Triangle> &, vector<Triangle> &, vector<Triangle> &, vector<Point> &, vector<Point>&, double* (*)(const double &, double &), double* (*)(double &, const double &), vector<double> &, vector<double> &, int &, int &);
+    
 
-private:
-    vector<Triangle>* triangles;
 };
-
 #endif
