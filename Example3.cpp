@@ -43,7 +43,7 @@ int main() {
     
     Triangulation t;
     t.buildTrianglesAndNodes(trianglesS1, trianglesS2, trianglesnotS1S2, nodesS1, nodesS2, S2Fx, S2Fy, x_i, y_i, n, m);
-    
+    /*
     string fname = "dat/S1Triangles.dat";
     t.saveTriangles(trianglesS1, fname);
     fname = "dat/S2Triangles.dat";
@@ -54,6 +54,6 @@ int main() {
     fname = "dat/nodesS1.dat";
     t.saveNodes(nodesS1, fname);
     fname = "dat/nodesS2.dat";
-    t.saveNodes(nodesS2, fname);
+    t.saveNodes(nodesS2, fname);*/
     return 0;
 }

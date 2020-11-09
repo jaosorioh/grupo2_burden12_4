@@ -1,5 +1,5 @@
 #include "include/Triangulation.h"
-
+#include "FEM.cpp"
 using namespace std;
 
 double * S2Fx(const double & x, double & y) {
