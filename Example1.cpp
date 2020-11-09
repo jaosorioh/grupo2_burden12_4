@@ -27,8 +27,8 @@ double * S2Fy(double & x, const double & y) {
 
 int main() {
     
-    int n = 10; //number of values of x
-    int m = 10;
+    int n = 5; //number of values of x
+    int m = 5;
     vector < double > x_i = {
         0.0,
         0.2,
@@ -60,5 +60,9 @@ int main() {
     fname = "dat/NotS1S2Triangles.dat";
     t.saveTriangles(trianglesnotS1S2, fname);
     
+    fname = "dat/nodesS1.dat";
+    t.saveNodes(nodesS1, fname);
+    fname = "dat/nodesS2.dat";
+    t.saveNodes(nodesS2, fname);
     return 0;
 }

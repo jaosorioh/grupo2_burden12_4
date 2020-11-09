@@ -8,18 +8,18 @@ using namespace std;
 
 class Point {
 public:
-    Point(double &, double & );
+    Point(double&, double&);
     Point();
-    void setX(double & );
+    void setX(double&);
     double getX() const;
 
-    void setY(double & );
+    void setY(double&);
     double getY() const;
 
-    void setXY(double &, double &);
-    vector <double> getXY() const;
+    void setXY(double&, double&);
+    vector<double> getXY() const;
     string toStr() const;
-    
+
 private:
     double x;
     double y;

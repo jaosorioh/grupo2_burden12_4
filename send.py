@@ -2,14 +2,20 @@
 import os
 import sys
 
-os.system( 'g++ src/Point.cpp src/Triangle.cpp src/Triangulation.cpp Example3.cpp -o a.out')
+os.system( 'g++ src/Point.cpp src/Triangle.cpp src/Triangulation.cpp Example1.cpp -o a.out')
 os.system( './a.out')
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-files = ["S1", "S2", "NotS1S2"];
-colors = ['k', 'r', '#61458a']
+files = ["nodesS1", "nodesS2"];
+for i, f in enumerate(files):
+    x, y = np.loadtxt("dat/"+f+".dat", unpack=True)
+    plt.plot(x, y, '.')
+    
+files = ["S1","S2","NotS1S2"]#, "S2", "NotS1S2"];
+colors = ['k', '#61458a', 'r']
+
 for i, f in enumerate(files):
     f = "dat/"+f+"Triangles.dat";
     if(os.path.getsize(f)>0): 

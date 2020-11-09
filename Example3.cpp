@@ -51,5 +51,9 @@ int main() {
     fname = "dat/NotS1S2Triangles.dat";
     t.saveTriangles(trianglesnotS1S2, fname);
     
+    fname = "dat/nodesS1.dat";
+    t.saveNodes(nodesS1, fname);
+    fname = "dat/nodesS2.dat";
+    t.saveNodes(nodesS2, fname);
     return 0;
 }

@@ -4,38 +4,39 @@
 
 using namespace std;
 
-void Triangulation::linspace(double &i, double &f, int &N, bool &endpoint, vector<double> &a) {
+void Triangulation::linspace(double& i, double& f, int& N, bool& endpoint, vector<double>& a)
+{
     if (N == 1) {
         a.push_back(i);
-    } else if (N > 1) {
+    }
+    else if (N > 1) {
         a.push_back(i);
         double h;
-        h = (f - i) / (static_cast < double > (N - (endpoint ? 1 : 0)));
+        h = (f - i) / (static_cast<double>(N - (endpoint ? 1 : 0)));
 
         for (int j = 1; j < N - 1; j++) {
             a.push_back(a.back() + h);
         }
 
         a.push_back(endpoint == true ? f : a.back() + h);
-    } else {
+    }
+    else {
         cout << "Debe tener al menos 1 elemento para linspace";
     }
 }
 
-    
-void Triangulation::multi_linspace(vector < double > & v, int & N, vector < double > & a) {
+void Triangulation::multi_linspace(vector<double>& v, int& N, vector<double>& a)
+{
     for (int i = 1; i < v.size(); i++) {
         double dvi = v.at(i) - v.at(i - 1);
-        bool ep = true;//i == (v.size() - 1);
-        vector < double > b;
+        bool ep = true; //i == (v.size() - 1);
+        vector<double> b;
         linspace(v.at(i - 1), v.at(i), N, ep, b);
         a.insert(a.end(), b.begin(), b.end());
     }
-    
+}
 
-}   
-
-void Triangulation::loadNodes(vector<Point> &nodes, const string & fname)
+void Triangulation::loadNodes(vector<Point>& nodes, const string& fname)
 {
     ifstream nodesFile(fname.c_str());
 
@@ -56,7 +57,7 @@ void Triangulation::loadNodes(vector<Point> &nodes, const string & fname)
     nodesFile.close();
 }
 
-void Triangulation::saveNodes(vector<Point> &nodes, const string & fname)
+void Triangulation::saveNodes(vector<Point>& nodes, const string& fname)
 {
     ofstream nodesFile(fname.c_str());
 
@@ -72,7 +73,7 @@ void Triangulation::saveNodes(vector<Point> &nodes, const string & fname)
     nodesFile.close();
 }
 
-void Triangulation::saveTriangles(vector<Triangle> &triangles, const string & fname)
+void Triangulation::saveTriangles(vector<Triangle>& triangles, const string& fname)
 {
     ofstream trianglesFile(fname.c_str());
 
@@ -88,97 +89,113 @@ void Triangulation::saveTriangles(vector<Triangle> &triangles, const string & fn
     trianglesFile.close();
 }
 
-void Triangulation::buildTrianglesAndNodes(vector<Triangle> & trianglesS1, vector<Triangle> & trianglesS2, vector<Triangle> & trianglesnotS1S2, vector<Point> & nodesS1, vector<Point>& nodesS2, double* (*SFx)(const double & x_, double &y_), double* (*SFy)(double &x_, const double &y_), vector<double> & x_i, vector<double> & y_i, int & N, int &M)
+bool Triangulation::inside(const Point& p, double* (*SFx)(const double& x_, double& y_))
 {
-    vector < double > x;
+    double yy;
 
-    vector < double > y;
-    
+    return (SFx(p.getX(), yy) != NULL && (p.getY() < yy || abs(p.getY() - yy) <= 1e-5));
+}
+
+bool Triangulation::inside(const Triangle& t, double* (*SFx)(const double& x_, double& y_))
+{
+    return inside(t.getE1(), SFx) && inside(t.getE2(), SFx) && inside(t.getE3(), SFx);
+}
+
+bool Triangulation::onS(const Point& p, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_))
+{
+    double xx;
+    double yy;
+    return ((SFx(p.getX(), yy) != NULL && abs(yy - p.getY()) <= 1e-4) || (SFy(xx, p.getY()) != NULL && abs(xx - p.getX()) <= 1e-4));
+}
+
+bool Triangulation::onS(const Triangle& t, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_))
+{
+    return (onS(t.getE1(), SFx, SFy) || onS(t.getE2(), SFx, SFy) || onS(t.getE3(), SFx, SFy));
+}
+
+void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector<Triangle>& trianglesS2, vector<Triangle>& trianglesnotS1S2, vector<Point>& nodesS1, vector<Point>& nodesS2, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_), vector<double>& x_i, vector<double>& y_i, int& N, int& M)
+{
+    vector<double> x;
+
+    vector<double> y;
+
     multi_linspace(x_i, N, x);
     multi_linspace(y_i, M, y);
-    
-    for(int i = 0; i<x.size()-1; i++)
-    {
-        for(int j = 0; j<y.size()-1; j++)
-        {
-            double xx;
-            double yy;
-            if(SFx(x.at(i), yy)!=NULL && (y.at(j)<yy || abs(y.at(j) - yy)<=1e-5))
-            {
-                if(SFx(x.at(i+1), yy)!=NULL && (y.at(j)<yy || abs(y.at(j) - yy)<=1e-5))
-                {                    
-                    if(SFx(x.at(i), yy)!=NULL && (y.at(j+1)<yy || abs(y.at(j+1) - yy)<=1e-5))
-                    {
-                        Point p1(x.at(i), y.at(j));
-                        Point p2(x.at(i), y.at(j+1));
-                        Point p3(x.at(i+1), y.at(j));
-                        Triangle t(p1, p2, p3);
-                        
-                        double x1, x2, x3;
-                        double y1, y2, y3;
-                        
-                        SFx(p1.getX(), y1);
-                        SFx(p2.getX(), y2);
-                        SFx(p3.getX(), y3);
-                        
-                        SFy(x1, p1.getY());
-                        SFy(x2, p2.getY());
-                        SFy(x3, p3.getY());
-                                        
-                        if((abs(p1.getX() - x1)<=1e-5 || abs(p1.getY() - y1)<=1e-5) || (abs(p2.getX() - x2)<=1e-5 || abs(p2.getY() - y2)<=1e-5) || (abs(p3.getX() - x3)<=1e-5 || abs(p3.getY() - y3)<=1e-5))
-                        {
-                            trianglesS2.push_back(t);
-                        }
-                        else if(p1.getX() != x_i.at(0) && p1.getY()!=y_i.at(0) && p2.getX()!=x_i.at(0) && p2.getY()!=y_i.at(0) && p3.getX()!=x_i.at(0) && p3.getY()!=y_i.at(0))
-                        {
-                            trianglesnotS1S2.push_back(t);
-                        }
-                        else
-                        {
-                            trianglesS1.push_back(t);
-                        }
+
+    for (int i = 0; i < x.size() - 1; i++) {
+        Point p1(x.at(i), y.at(0));
+        Point p2(x.at(i), y.at(1));
+        Point p3(x.at(i + 1), y.at(0));
+
+        nodesS1.push_back(p1);
+        if (i == x.size() - 2)
+            nodesS1.push_back(p3);
+
+        Triangle t(p1, p2, p3);
+        if (inside(t, SFx))
+            trianglesS1.push_back(t);
+        p1.setXY(x.at(i + 1), y.at(1));
+        Triangle t2(p2, p3, p1);
+        if (inside(t2, SFx))
+            trianglesS1.push_back(t2);
+    }
+
+    for (int j = 0; j < y.size() - 1; j++) {
+        Point p1(x.at(0), y.at(j));
+        Point p2(x.at(1), y.at(j));
+        Point p3(x.at(0), y.at(j + 1));
+
+        nodesS1.push_back(p1);
+        if (j == y.size() - 2)
+            nodesS1.push_back(p3);
+
+        Triangle t(p1, p2, p3);
+
+        if (inside(t, SFx))
+            trianglesS1.push_back(t);
+        p1.setXY(x.at(1), y.at(j + 1));
+        Triangle t2(p1, p3, p2);
+        if (inside(t2, SFx))
+            trianglesS1.push_back(t2);
+    }
+
+    for (int i = 1; i < x.size(); i++) {
+        for (int j = 1; j < y.size(); j++) {
+            Point p1(x.at(i), y.at(j));
+            if (onS(p1, SFx, SFy)) {
+                if (nodesS2.size() == 0 || (nodesS2.size() > 0 && (nodesS2.back().getX() != p1.getX() || nodesS2.back().getY() != p1.getY())))
+                    nodesS2.push_back(p1);
+            }
+            if (i < x.size() - 1 && j < y.size() - 1) {
+                Point p2(x.at(i + 1), y.at(j));
+                Point p3(x.at(i), y.at(j + 1));
+                if (onS(p1, SFx, SFy)) {
+                    if (nodesS2.size() == 0 || (nodesS2.size() > 0 && (nodesS2.back().getX() != p1.getX() || nodesS2.back().getY() != p1.getY())))
+                        nodesS2.push_back(p1);
+                    if (onS(p1, SFx, SFy)) {
+                        if (nodesS2.size() == 0 || (nodesS2.size() > 0 && (nodesS2.back().getX() != p1.getX() || nodesS2.back().getY() != p1.getY())))
+                            nodesS2.push_back(p1);
                     }
                 }
-            }
-            
-            if(SFx(x.at(i), yy)!=NULL && (y.at(j+1)<yy || abs(y.at(j+1) - yy)<=1e-5))
-            {
-                if(SFx(x.at(i+1), yy)!=NULL && (y.at(j+1)<yy || abs(y.at(j+1) - yy)<=1e-5))
-                {                    
-                    if(SFx(x.at(i+1), yy)!=NULL && (y.at(j)<yy || abs(y.at(j) - yy)<=1e-5))
-                    {
-                        Point p1(x.at(i), y.at(j+1));
-                        Point p2(x.at(i+1), y.at(j+1));
-                        Point p3(x.at(i+1), y.at(j));
-                        Triangle t(p1, p2, p3);
-                        
-                        double x1, x2, x3;
-                        double y1, y2, y3;
-                        
-                        SFx(p1.getX(), y1);
-                        SFx(p2.getX(), y2);
-                        SFx(p3.getX(), y3);
-                        
-                        SFy(x1, p1.getY());
-                        SFy(x2, p2.getY());
-                        SFy(x3, p3.getY());
-                                        
-                        if((abs(p1.getX() - x1)<=1e-5 || abs(p1.getY() - y1)<=1e-5) || (abs(p2.getX() - x2)<=1e-5 || abs(p2.getY() - y2)<=1e-5) || (abs(p3.getX() - x3)<=1e-5 || abs(p3.getY() - y3)<=1e-5))
-                        {
-                            trianglesS2.push_back(t);
-                        }
-                        else if(p1.getX() != x_i.at(0) && p1.getY()!=y_i.at(0) && p2.getX()!=x_i.at(0) && p2.getY()!=y_i.at(0) && p3.getX()!=x_i.at(0) && p3.getY()!=y_i.at(0))
-                        {
-                            trianglesnotS1S2.push_back(t);
-                        }
-                        else
-                        {
-                            trianglesS1.push_back(t);
-                        }
-                    }
+                Triangle t(p1, p2, p3);
+
+                if (inside(t, SFx)) {
+                    if (onS(t, SFx, SFy))
+                        trianglesS2.push_back(t);
+                    else
+                        trianglesnotS1S2.push_back(t);
+                }
+
+                p1.setXY(x.at(i + 1), y.at(j + 1));
+                Triangle t2(p1, p2, p3);
+
+                if (inside(t2, SFx)) {
+                    if (onS(t2, SFx, SFy))
+                        trianglesS2.push_back(t2);
+                    else
+                        trianglesnotS1S2.push_back(t2);
                 }
             }
-            
-        } 
+        }
     }
 }
