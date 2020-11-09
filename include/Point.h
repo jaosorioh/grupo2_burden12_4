@@ -19,10 +19,6 @@ public:
     void setXY(double&, double&);
     vector<double> getXY() const;
     string toStr() const;
-    bool operator==(const Point & obj) const
-    {
-        return (this->getX() == obj.getX() && this->getY() == obj.getY());
-    }
 
 private:
     double x;
