@@ -1,10 +1,12 @@
 #include "include/Triangulation.h"
 #include <algorithm>
+#include <iostream> 
+
 //prototipos
 
 using namespace std;
 
-int findNodeIndex(vector<Point> nodes, Point p);
+int findNodeIndex(vector<Point> & nodes, Point & p);
 //step 4-Nicole
 void doubleIntegrals(Triangle &triangles, vector<vector<vector<double>>> &Z, vector<vector<double>> &H);
 
@@ -49,7 +51,8 @@ void solve(double* (*S2Fx)(const double &, double &), double* (*S2Fy)(double &, 
     t.multi_linspace(y_i, M, y);
     
     t.buildTrianglesAndNodes(trianglesS1, trianglesS2, trianglesnotS1S2, nodesS1, nodesS2, S2Fx, S2Fy, x, y);
-    /*
+    Point p(x[0], y[0]);
+    
     string fname = "dat/S1Triangles.dat";
     t.saveTriangles(trianglesS1, fname);
     fname = "dat/S2Triangles.dat";
@@ -60,7 +63,7 @@ void solve(double* (*S2Fx)(const double &, double &), double* (*S2Fy)(double &, 
     fname = "dat/nodesS1.dat";
     t.saveNodes(nodesS1, fname);
     fname = "dat/nodesS2.dat";
-    t.saveNodes(nodesS2, fname);*/
+    t.saveNodes(nodesS2, fname);
     
     const int n = nodesS1.size();
     const int m = nodesS2.size();
