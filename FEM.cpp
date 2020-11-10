@@ -16,6 +16,98 @@ void lineIntegrals(Triangle & trianglesS2, vector<vector<vector<double>>> &J, ve
 //step 6-12-Brayan
 void assembleDoubleIntegrals(Triangle &t, vector<vector<double>> & alpha, vector<double> & beta, vector<double> &gamma, vector<vector<vector<double>>> &Z, vector<vector<double>> &H);
 
+//funcion que calcula el delta (determinante) para el triángulo i:
+double DeltaT( Triangle T )
+{	
+	double x1,x2,x3,y1,y2,y3;
+	x1 = T.getE1().getX(); y1 = T.getE1().getY();
+	x2 = T.getE2().getX(); y2 = T.getE2().getY();
+	x3 = T.getE3().getX(); y3 = T.getE3().getY();
+	
+    double matrix[10][10] = {{1.0, x1 , y1},
+			    { 1.0, x2 , y2},
+			    { 1.0, x3 , y3}};
+
+	double delta;
+	delta = determinante(matrix, 3);
+	cout<<"El determinante es: "<< delta<<endl;
+	return delta;
+}
+
+//Coeficientes A del triángulo i
+vector <double> coef_a( Triangle T, double delta )
+{	
+	double x1,x2,x3,y1,y2,y3;
+	x1 = T.getE1().getX(); y1 = T.getE1().getY();
+	x2 = T.getE2().getX(); y2 = T.getE2().getY();
+	x3 = T.getE3().getX(); y3 = T.getE3().getY();
+
+	double a1, a2, a3;
+	a1 = (x2*y3 - y2*x3)/delta;
+	a2 = (x3*y1 - y3*x1)/delta;
+	a3 = (x1*y2 - y1*x2)/delta;
+	vector <double> a = {a1,a2,a3};
+
+	return a;
+}
+
+//Coeficientes B del triángulo i
+vector <double> coef_b( Triangle T, double delta )
+{	
+	double x1,x2,x3,y1,y2,y3;
+	x1 = T.getE1().getX(); y1 = T.getE1().getY();
+	x2 = T.getE2().getX(); y2 = T.getE2().getY();
+	x3 = T.getE3().getX(); y3 = T.getE3().getY();
+	
+	double b1, b2, b3;
+	b1 = (y2 - y3)/delta;
+	b2 = (y3 - y1)/delta;
+	b3 = (y1 - y2)/delta;
+
+	vector <double> b = {b1,b2,b3};
+
+	return b;
+}
+
+//Coeficientes C del triángulo i
+vector <double> coef_c( Triangle T, double delta )
+{	
+	double x1,x2,x3,y1,y2,y3;
+	x1 = T.getE1().getX(); y1 = T.getE1().getY();
+	x2 = T.getE2().getX(); y2 = T.getE2().getY();
+	x3 = T.getE3().getX(); y3 = T.getE3().getY();
+
+	double c1, c2, c3;
+	c1 = (x3 - x2)/delta;
+	c2 = (x1 - x3)/delta;
+	c3 = (x2 - x1)/delta;
+
+	vector <double> c = {c1,c2,c3};
+
+	return c;
+}
+
+//N_i, recibe a, b, c y además x e y
+vector <double> Ni( vector <double> &a, vector <double> &b, vector <double> &c, double x, double y)
+{
+	vector <double> N = {};
+		for(int i = 0; i < 3; i++){
+		N.push_back( a[i] + b[i]*x + c[i]*y );}
+	return N;
+}
+	
+//Todo en una sola (sobrecargo de la función Ni anterior)
+vector <double> Ni( Triangle T, double x, double y)
+{
+
+	double delta = DeltaT( T );
+	vector <double> a = coef_a( T, delta );
+	vector <double> b = coef_b( T, delta );
+	vector <double> c = coef_c( T, delta );
+	vector <double> N = Ni( a, b, c, x, y);
+	return N;
+}
+
 //step 13-19-Brayan
 void assembleDoubleIntegrals(Triangle &trianglesS2, vector<vector<double>> & alpha, vector<double> & beta, vector<double> &gamma, vector<vector<vector<double>>> &J, vector<vector<double>> &I);
 
