@@ -4,21 +4,13 @@
 
 using namespace std;
 
-Point::Point(double& x_, double& y_)
+Point::Point(double x_, double y_)
 {
     setX(x_);
     setY(y_);
 }
 
-Point::Point()
-{
-    double x_ = 0.0;
-    double y_ = 0.0;
-    setX(x_);
-    setY(y_);
-}
-
-void Point::setX(double& x_)
+void Point::setX(double x_)
 {
     x = x_;
 }
@@ -28,7 +20,7 @@ double Point::getX() const
     return x;
 }
 
-void Point::setY(double& y_)
+void Point::setY(double y_)
 {
     y = y_;
 }
@@ -38,7 +30,7 @@ double Point::getY() const
     return y;
 }
 
-void Point::setXY(double& x_, double& y_)
+void Point::setXY(double x_, double y_)
 {
     setX(x_);
     setY(y_);

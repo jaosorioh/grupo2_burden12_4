@@ -8,15 +8,14 @@ using namespace std;
 
 class Point {
 public:
-    Point(double&, double&);
-    Point();
-    void setX(double&);
+    Point(double=0.0, double=0.0);
+    void setX(double);
     double getX() const;
 
-    void setY(double&);
+    void setY(double);
     double getY() const;
 
-    void setXY(double&, double&);
+    void setXY(double, double);
     vector<double> getXY() const;
     string toStr() const;
 
