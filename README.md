@@ -1,5 +1,5 @@
 # Método de Elementos Finitos - G2 #
-*Desarrollo basado en la sección 12.4 del libro Numerical Analisis - Burden*
+*Desarrollo basado en la sección 12.4 del libro Numerical Analysis - Burden*
 
 **Colaboradores: Brayan Muñoz, John Osorio y Nicole Rivera**
 
