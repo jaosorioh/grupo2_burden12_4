@@ -6,8 +6,7 @@
 
 using namespace std;
 
-namespace linearalgebra
-{
+
 // ######### DECLARACIÓN DE FUNCIONES ############## //
 
 //#### Funcion para resolver determinante:
@@ -42,6 +41,13 @@ void backSub(double mat[10][10+1], int N);
 
 //#########################################
 
+
+double det(vector<vector<double>> & matrix)
+{
+    return (matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2])
+           -matrix[1][0] * (matrix[0][1] * matrix[2][2] - matrix[2][1] * matrix[0][2])
+           +matrix[2][0] * (matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]));
+}
 
 float determinante( double matrix[10][10], int n)
 {
@@ -178,7 +184,7 @@ int forwardElim(double mat[10][10+1], int N)
 
         //print(mat);        //for matrix state
     }
-    cout<<"Matriz triangular: "<<endl;
+    cout<<"matrix triangular: "<<endl;
     print(mat, N);            //for matrix state
     return -1;
 }
@@ -235,20 +241,6 @@ void linspace(double &i, double &f, int &N, bool &endpoint, vector<double> &a) {
     }
 }
 
-void nonuniform_linspace(vector < double > & v, int & N, vector < double > & a) {
-    double dv = v.at(v.size() - 1) - v.at(0);
-
-    for (int i = 1; i < v.size(); i++) {
-        double dvi = v.at(i) - v.at(i - 1);
-        int m = round(static_cast < double > (N) * (dvi / dv));
-        bool ep = i == (v.size() - 1);
-        vector < double > b;
-        linspace(v.at(i - 1), v.at(i), m, ep, b);
-        a.insert(a.end(), b.begin(), b.end());
-    }
-
-}
-    
 void multi_linspace(vector < double > & v, int & N, vector < double > & a) {
     for (int i = 1; i < v.size(); i++) {
         double dvi = v.at(i) - v.at(i - 1);
@@ -260,6 +252,6 @@ void multi_linspace(vector < double > & v, int & N, vector < double > & a) {
 
 }    
 
-}//Fin namespace
+//Fin namespace
 
 
