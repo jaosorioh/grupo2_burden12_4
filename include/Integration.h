@@ -8,17 +8,22 @@ using namespace std;
 
 class Integration {
 public:
-    /*Metodo de integracion sobre triangulos
-    input: Clase triangle, con la info de los 3 vertices, ver Triangle.h. El programa obtiene los límites de integración a partir del triangulo y usa la funcion getAsLine
-    f(x, y): funcion de integracion. Una sola, puede ser el producto de varias funciones. 
-    output: valor numerico de la ecuacion.
-    */
-    
+
+    Integration( void ); //constructor
+
+    double Gaussian_quad2D( double (*)( const double, const double),
+                double, double, double (*)(const double), double (*)(const double) );
+
     double Integration2D(Triangle &, double* (*)(const double &, double &));
+    
+
     /*aun no estoy muy claro con este punto*/
     double lineIntegration(vector<Point> &, double *(*)(const double &, const double &));
     
 private:
+    //raices y coeficientes para integrar
+    double r_ij[5][5];
+    double C_ij[5][5];
 /*construye una línea recta con la forma “y = mx + b” a partir de la diagonal de un triangulo, devuelve una funcion.”. 
 */
     std::function<double (double)> getAsLine(Triangle t);
