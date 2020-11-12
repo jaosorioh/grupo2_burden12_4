@@ -128,7 +128,7 @@ void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector
             if (inside(t, SFx))
                 trianglesS1.push_back(t);
             p1.setXY(x.at(i + 1), y.at(1));
-            Triangle t2(p2, p3, p1);
+            Triangle t2(p1, p2, p3);
             if (inside(t2, SFx))
                 trianglesS1.push_back(t2);
         }
@@ -151,7 +151,7 @@ void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector
         }
         p1.setXY(x.at(1), y.at(j + 1));
         if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
-            Triangle t2(p1, p3, p2);
+            Triangle t2(p1, p2, p3);
             if (inside(t2, SFx))
                 trianglesS1.push_back(t2);
         }
@@ -165,8 +165,8 @@ void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector
                     nodesS2.push_back(p1);
             }
             if (i < x.size() - 1 && j < y.size() - 1) {
-                Point p2(x.at(i + 1), y.at(j));
-                Point p3(x.at(i), y.at(j + 1));
+                Point p2(x.at(i), y.at(j+1));
+                Point p3(x.at(i+1), y.at(j));
                 if (onS(p1, SFx, SFy)) {
                     if (nodesS2.size() == 0 || (nodesS2.size() > 0 && (nodesS2.back().getX() != p1.getX() || nodesS2.back().getY() != p1.getY())))
                         nodesS2.push_back(p1);
