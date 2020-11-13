@@ -6,8 +6,8 @@ Implementación de la clase Integration
 #include <cmath>
 #include <functional>
 
-#include "Triangle.h"
-#include "Integration.h"
+#include "../include/Triangle.h"
+#include "../include/Integration.h"
 
 using namespace std;
 
@@ -15,29 +15,6 @@ using namespace std;
 Integration::Integration( void )
 {
 	//lo que se necesite inicializar
-	r_ij = {
-		{0.0, 0.0, 0.0, 0.0, 0.0},
-		// Roots n=2 
-		{0.5773502692, -0.5773502692, 0.0, 0.0, 0.0},
-		// Roots n=3 
-		{0.7745966692, 0.0000000000, -0.7745966692, 0.0, 0.0},
-		// Roots n=4
-		{0.8611363116, 0.3399810436, -0.3399810436, -0.8611363116, 0.0},
-		// Roots n=5 
-		{0.9061798459, 0.5384693101, 0.0000000000, -0.5384693101, -0.9061798459}
-	};
-
-	C_ij = {
-		{0.0, 0.0, 0.0, 0.0, 0.0},
-		// Roots n=2 
-		{1.0000000000, 1.0000000000, 0.0, 0.0, 0.0},
-		// Roots n=3 
-		{0.5555555556, 0.8888888889, 0.5555555556, 0.0, 0.0},
-		// Roots n=4 
-		{0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451, 0.0},
-		// Roots n=5 
-		{0.2369268850, 0.4786286705, 0.5688888889, 0.4786286705, 0.2369268850}
-	};
 
 }
 
@@ -80,3 +57,65 @@ double Integration::Gaussian_quad2D( double (*Function)( const double x_, const 
 
 	return J;
 }
+
+void Integration::set2D_params( const double E1x, const double E1y, const double E2x, const double E2y, 
+            const double E3x, const double E3y )
+{
+	double m_, dm_, d_, a_, b_, c_;
+
+	if (E2y > E3y)
+	{
+		m_ = (E2y-E3y)/(E2x-E3x);
+
+		a_ = E2x;
+		b_ = E3x;
+		c_ = E2y;
+		d_ = E2y;
+		dm_ = E2x;
+
+		//cout << "recta: " << m_ << " (x-" << dm_ << ") + " << d_ << endl;
+	}
+	else if ( E3y > E2y )
+	{
+		m_ = ( E3y - E2y )/( E3x - E2x );
+
+		a_ = E3x;
+		b_ = E2x;
+		c_ = E3y;
+		d_ = E3y;
+		dm_ = E3x;
+
+		//cout << "recta: " << m_ << " (x-" << dm_ << ") + " << d_ << endl;
+	}
+
+	//estableciendo variables privadas para los límites
+	_slope = m_;
+	_xm = dm_;
+	_intr = d_;
+	_aLim = a_;
+	_bLim = b_;
+	_cCon = c_;
+
+}
+
+double Integration::_cLim( const double _x )
+{
+	return _cCon;
+}
+
+double Integration::_dLim( const double _x )
+{
+	double yy = _slope*( _x - _xm ) + _intr;
+	return yy;
+}
+
+double Integration::get_aLim( void ) const
+{
+	return _aLim;
+}
+
+double Integration::get_bLim( void ) const
+{
+	return _bLim;
+}
+
