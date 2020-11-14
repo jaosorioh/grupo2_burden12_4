@@ -14,7 +14,102 @@ void doubleIntegrals(Triangle& triangles, vector<vector<vector<double> > >& Z, v
 void lineIntegrals(Triangle& trianglesS2, vector<vector<vector<double> > >& J, vector<vector<double> >& I);
 
 //step 6-12-Brayan
-void assembleDoubleIntegrals(Triangle& t, vector<vector<double> >& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double> > >& Z, vector<vector<double> >& H);
+void assembleDoubleIntegrals1( vector<Triangle> T, vector<Point>& nodes, vector<Point>& nodesS2, vector<vector<double>>& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double>>>& Z, vector<vector<double>>& H);
+
+/* Función del paso 6-12
+INPUT: Vector de triángulos que alberga todos los triángulos, vector de nodos, vector de nodos en S2, alfa, beta, gamma, Z, H.
+OUTPUT: vacía, solo llena los alfa y beta */
+void assembleDoubleIntegrals1( vector<Triangle> T, vector<Point>& nodes, vector<Point>& nodesS2, vector<vector<double>>& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double>>>& Z, vector<vector<double>>& H)
+{	
+	//Paso 6: correr sobre todos los triangulos
+	int Mt = T.size();	//Numero total de triángulos, el primer for va hasta aquí
+	for(int i = 0; i<=Mt; i++)
+	{	
+		vector<Point> Nodesi = {T[i].getE1.(),T[i].getE2,T[i].getE3()}; //Los 3 Nodos del triángulo i
+		int m = nodes.size();
+		int n = nodesS2.size();
+		
+		//Paso 7: correr k = 1,2,3 (En nuestro caso 0,1,2)
+		for(int k=0;k<3;k++)
+		{	
+			//Paso 8: Encontramos el indice l en la lista de todos los nodos en S1US2
+			Point p1 = Nodesi[k];
+			int l = findNodeIndex(nodes, p1);
+
+			//Paso 9:
+			if(k>0){				//If k != 0
+				for(int j=0;j < k;j++){		// j =0,1...k-1
+
+					//Paso 10:
+					Point p2 = Nodesi[j];
+					int t = findNodeIndex(nodes, p2);
+
+					//Paso 11:
+					if(l<=n){
+						if(t<=n){ alpha[l][t] = alpha[l][t] + Z[i][k][j];
+							alpha[t][l] = alpha[t][l] + Z[i][k][j];
+							}
+						else{beta[l] = beta[l] - gamma[l]*Z[i][k][j];}
+						}
+					else if(t<=n){beta[t] = beta[t] - gamma[l]*Z[i][k][j];}
+							}
+				//Paso 12:
+				if(l<=n){a[l][l] = alpha[l][l] + Z[i][k][k];
+					beta[l] = beta[l] + H[i][k];}
+				}
+		}
+	}
+
+}//Fin :D
+
+//step 13-19-Brayan
+void assembleDoubleIntegrals2(vector<Triangle>& TS2, vector<vector<double> >& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double>>>& J, vector<vector<double> >& I);
+
+/* Función del paso 13-19
+INPUT: Los triángulos que tienen  al menos un nodo en S2, alfa, beta, gamma, J, I.
+OUTPUT: vacía, solo llena los alfa y beta */
+void assembleDoubleIntegrals2(vector<Triangle>& TS2, vector<vector<double> >& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double>>>& J, vector<vector<double> >& I)
+{
+	//Paso 13: correr sobre los triangulos con al menos un edge en S2
+	int K = TS2.size()	//Triángulos con al menos un edge en S2, sobre esto corre el for
+	for(int i = 0; i<=K; i++)
+	{
+		vector<Point> Nodesi = {T[i].getE1.(),T[i].getE2,T[i].getE3()}; //Los 3 Nodos del triángulo i
+
+		//Paso 14: correr sobre k = 1,2,3 (0,1,2 en nuestro caso)
+		for(int k = 0; k<3; k++)
+		{
+			//Paso 15: encontrar l en la lista de nodos
+			Point p1 = Nodesi[k];
+			int l = findNodeIndex(nodes, p1);	//Encontramos el indice l en la lista de todos los nodos en S1US2
+
+			//Paso 16:
+			if(k>0){				//If k != 0
+				for(int j=0;j < k;j++){		// j =0,1...k-1
+
+					//Paso 17: encontrar t
+					Point p2 = Nodesi[j];
+					int t = findNodeIndex(nodes, p2);
+
+					//Paso 18:
+					if(l<=n){
+						if(t<=n){ alpha[l][t] = alpha[l][t] + J[i][k][j];
+							alpha[t][l] = alpha[t][l] + J[i][k][j];
+							}
+						else{beta[l] = beta[l] - gamma[l]*J[i][k][j];}
+						}
+					else if(t<=n){beta[t] = beta[t] - gamma[l]*J[i][k][j];}
+							}
+
+				//Paso 19:
+				if(l<=n){alpha[l][l] = alpha[l][l] + J[i][k][k];
+					beta[l] = beta[l] + I[i][k];}
+				}
+		}
+	}
+
+
+}//Fin :D
 
 //Calcula los vectores a, b, c del triángulo i
 void coefABC(Triangle& T, vector<double>& a, vector<double>& b, vector<double>& c)
@@ -87,9 +182,6 @@ vector<double> Ni(vector<double>& a, vector<double>& b, vector<double>& c, doubl
     vector<double> N = Ni(a, b, c, x, y);
     return N;
 }*/
-
-//step 13-19-Brayan
-void assembleDoubleIntegrals(Triangle& trianglesS2, vector<vector<double> >& alpha, vector<double>& beta, vector<double>& gamma, vector<vector<vector<double> > >& J, vector<vector<double> >& I);
 
 //step 8, 10, 15, 17
 int findNodeIndex(vector<Point>& nodes, Point& p)
