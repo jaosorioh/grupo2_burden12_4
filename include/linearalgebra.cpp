@@ -1,12 +1,13 @@
 //Namespace
 
-#include<bits/stdc++.h>
+#include<bits/stdc++.h> 
 #include<iostream>
 #include<math.h>
 
-using namespace std;
+using namespace std; 
 
-
+namespace linearalgebra
+{
 // ######### DECLARACIÓN DE FUNCIONES ############## //
 
 //#### Funcion para resolver determinante:
@@ -15,38 +16,44 @@ float determinante( double mat[10][10], int n);
 // mostrar determinante:
 void printdet(double mat[10][10], int n);
 
-//#### Funciones para resolver sistema lineal (Solo hay que implementar gaussianElimination):
+//#### Funciones para resolver sistema lineal (Solo hay que implementar gaussianElimination): 
 
-// function to get matrix content
-void gaussianElimination(double mat[10][10+1], int N);
+// Función principal, soluciona AC = B: para obtener el contenido de la matriz y llamar las otras funciones
+//INPUT: Matriz A NxN y vector B de tamaño N
+//OUTPUT: Vector solución C de tamaño N
+vector<double> gaussianElimination(vector<vector<double>> A, vector<double> B);
 
-// function to reduce matrix to r.e.f.  Returns a value to
-// indicate whether matrix is singular or not
-int forwardElim(double mat[10][10+1], int N);
-
-// function to calculate the values of the unknowns
-void backSub(double mat[10][10+1], int N);
+// función para reducir la matriz a r.e.f. Devuelve un valor para indicar si la matriz es singular o no(r.e.f = reduction to echoleon form = reduccion a forma escalonada)
+int forwardElim(vector<vector<double>> mat); 
+  
+// Funcion para calcular el valor de las incognitas 
+vector<double> backSub(vector<vector<double>> mat); 
 
 //Muestra las matrices
-void print(double mat[10][10+1], int N);
+void print(vector<vector<double>> mat);
 
-// function for elementary operation of swapping two rows
-void swap_row(double mat[10][10+1], int N, int i, int j);
+// Función para la operación de elementaria de intercambiar filas 
+void swap_row(vector<vector<double>> mat, int i, int j);
 
-// function to reduce matrix to r.e.f.
-int forwardElim(double mat[10][10+1], int N);
+// Función para reducir la matriz a r.e.f. (reduction to echelon form)
+int forwardElim(vector<vector<double>> mat);
 
-// function to calculate the values of the unknowns
-void backSub(double mat[10][10+1], int N);
+// función para llenar matriz del sistema AC = B con los vectores A y B (el sistema es una matriz con la última columna el lado derecho de la ecuación)
+vector<vector<double>> fillSystem(vector<vector<double>> A, vector<double> B);
 
 //#########################################
 
 
-double det(vector<vector<double>> & matrix)
+vector<vector<double>> fillSystem(vector<vector<double>> matrix, vector<double> row)
 {
-    return (matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2])
-           -matrix[1][0] * (matrix[0][1] * matrix[2][2] - matrix[2][1] * matrix[0][2])
-           +matrix[2][0] * (matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]));
+	if( matrix.size() == row.size() )
+	{
+		for(int i = 0; i<matrix.size(); i++){
+		matrix[i].push_back(row[i]);}
+	}
+	else if(matrix.size() > row.size()){cout<<"Cuiado, el sistema no es cuadrado. (Matriz mayor que columna)"<<endl;}
+	else{cout<<"Cuiado, el sistema no es cuadrado. (Columna mayor que matriz)"<<endl;}
+	return matrix;
 }
 
 float determinante( double matrix[10][10], int n)
@@ -86,172 +93,139 @@ void printdet(double matrix[10][10], int n)
     }
 }
 
-void gaussianElimination(double mat[10][10+1], int N)
-{
-    cout<<"Sistema a resolver: "<<endl;
-    print(mat, N); //Mostrar el sistema a resolver
-    /* reduction into r.e.f. */
-    int singular_flag = forwardElim(mat, N);
+vector<double> gaussianElimination(vector<vector<double>> A, vector<double> B) 
+{ 
+	vector<vector<double>> mat = fillSystem(A,B);
+	int N = mat.size();
 
-    /* if matrix is singular */
-    if (singular_flag != -1)
-    {
-        printf("Singular Matrix.\n");
+	//Para ver el sistema a resolver, descomentar lo siguiente:
+	/*cout<<"Sistema a resolver: "<<endl;
+	print(mat); //Mostrar el sistema a resolver */
 
-        /* if the RHS of equation corresponding to
-           zero row  is 0, * system has infinitely
-           many solutions, else inconsistent*/
-        if (mat[singular_flag][N])
-            printf("Inconsistent System.");
+    // Reducción
+    int singular_flag = forwardElim(mat); 
+  
+    // Si la matriz es singular
+    if (singular_flag != -1) 
+    { 
+        printf("Matriz Singular.\n"); 
+  
+        // si el RHS de la ecuación correspondiente a la fila cero es 0, el sistema tiene infinitas soluciones, de lo contrario es inconsistente
+        if (mat[singular_flag][N]) 
+            printf("Sistema inconsistente"); 
         else
             printf("May have infinitely many "
-                   "solutions.");
+                   "solutions."); 
+    } 
+  
+    // Obtener la solución y guardarla en un vector
+    vector<double> Solutions = backSub(mat); 
+    return Solutions;
+} 
+  
+// Función para operaciones elementarias entre filas
+void swap_row(vector<vector<double>> mat, int i, int j) 
+{ 
+    int N = mat.size();
+    //printf("Filas cambiadas %d and %d\n", i, j); //Mostrar cambios entre filas
+  
+    for (int k=0; k<=N; k++) 
+    { 
+        double temp = mat[i][k]; 
+        mat[i][k] = mat[j][k]; 
+        mat[j][k] = temp; 
+    } 
+} 
+  
+// Función para mostrar estado de la matriz
+void print(vector<vector<double>> mat) 
+{ 
+    int N = mat.size();
+    for (int i=0; i<N; i++, printf("\n")) 
+        for (int j=0; j<=N; j++){
+	    cout<< setw(5)<< setprecision(4) <<mat[i][j];
+	    if(j == N-1){cout<<"|";}}
+  
+    printf("\n"); 
+} 
+  
+// Función para reducir la matriz 
+int forwardElim(vector<vector<double>> mat) 
+{ 
+    int N = mat.size();
+    for (int k=0; k<N; k++) 
+    { 
+        // Inicializar valor máximo e índice para pivote
+        int i_max = k; 
+        int v_max = mat[i_max][k]; 
+  
+        // Encontrar mayor amplitud para el pivote si lo hay
+        for (int i = k+1; i < N; i++) 
+            if (abs(mat[i][k]) > v_max) 
+                v_max = mat[i][k], i_max = i; 
+  
+        // si un elemento diagonal principal es cero, denota que la matriz es singular y conducirá a una división por cero más adelante
+        if (!mat[k][i_max]) 
+            return k; // La Matriz es singular
+  
+        // Intercambiar la fila de mayor valor con la fila actual
+        if (i_max != k) 
+            swap_row(mat, k, i_max); 
+  
+  
+        for (int i=k+1; i<N; i++) 
+        { 
+	    //factor f para setear el k-ésimo elemento de la fila actual en 0 y la k-ésima columna restante en 0
+            double f = mat[i][k]/mat[k][k]; 
+  
+            // Restar el f multiplo of correspondiente al elemento de la fila k
+            for (int j=k+1; j<=N; j++) 
+                mat[i][j] -= mat[k][j]*f; 
+  
+            // Llenar la matriz triangular inferior con ceros
+            mat[i][k] = 0; 
+        } 
+  
+        //print(mat);        //Estado de la matriz
+    } 
+	//Para ver la matriz triangular final, descomentar lo siguiente:
+    /*cout<<"Matriz triangular: "<<endl;
+    print(mat);*/            //Estado de la matriz 
+    return -1; 
+} 
+  
+// función que calcula el valor de las incógnitas
+vector<double> backSub(vector<vector<double>> mat) 
+{ 
+    int N = mat.size();
+    vector<double> x(N);  // Vector para guardar la solución
+  
+    // Comenzamos a calcular de la última ecuación a la primera
+    for (int i = N-1; i >= 0; i--) 
+    { 
+        // Empezamos con el lado derecho de la ecuación
+        x[i] = mat[i][N]; 
+  
+        // Initializamos j en i+1 ya que la matriz es superior triangular
+        for (int j=i+1; j<N; j++) 
+        { 
+            // restar todos los valores de lhs excepto el coeficiente de la variable cuyo valor se está calculando
+            x[i] -= mat[i][j]*x[j]; 
+        } 
+  
+        // dividir el RHS por la incógnita que se está calculando
+        x[i] = x[i]/mat[i][i]; 
+    } 
+    
+	//Para ver la solución, descomentar lo siguiente:
+ 
+    /*printf("\nSolución del sistema:\n"); 
+    for (int i=0; i<N; i++){
+        cout<<"x"<<i<<" = "<< setprecision(4) << x[i]<<endl;}
+	cout<<endl;*/
 
-        return;
-    }
+	return x;
+} 
 
-    /* get solution to system and print it using
-       backward substitution */
-    backSub(mat, N);
-}
-
-// function for elementary operation of swapping two rows
-void swap_row(double mat[10][10+1],int N, int i, int j)
-{
-    //printf("Swapped rows %d and %d\n", i, j);
-
-    for (int k=0; k<=N; k++)
-    {
-        double temp = mat[i][k];
-        mat[i][k] = mat[j][k];
-        mat[j][k] = temp;
-    }
-}
-
-// function to print matrix content at any stage
-void print(double mat[10][10+1], int N)
-{
-    for (int i=0; i<N; i++, printf("\n"))
-        for (int j=0; j<=N; j++) {
-            cout<< setw(5)<< setprecision(1) <<mat[i][j];
-            if(j == N-1) {
-                cout<<"|";
-            }
-        }
-
-    printf("\n");
-}
-
-// function to reduce matrix to r.e.f.
-int forwardElim(double mat[10][10+1], int N)
-{
-    for (int k=0; k<N; k++)
-    {
-        // Initialize maximum value and index for pivot
-        int i_max = k;
-        int v_max = mat[i_max][k];
-
-        /* find greater amplitude for pivot if any */
-        for (int i = k+1; i < N; i++)
-            if (abs(mat[i][k]) > v_max)
-                v_max = mat[i][k], i_max = i;
-
-        /* if a prinicipal diagonal element  is zero,
-         * it denotes that matrix is singular, and
-         * will lead to a division-by-zero later. */
-        if (!mat[k][i_max])
-            return k; // Matrix is singular
-
-        /* Swap the greatest value row with current row */
-        if (i_max != k)
-            swap_row(mat, N, k, i_max);
-
-
-        for (int i=k+1; i<N; i++)
-        {
-            /* factor f to set current row kth element to 0,
-             * and subsequently remaining kth column to 0 */
-            double f = mat[i][k]/mat[k][k];
-
-            /* subtract fth multiple of corresponding kth
-               row element*/
-            for (int j=k+1; j<=N; j++)
-                mat[i][j] -= mat[k][j]*f;
-
-            /* filling lower triangular matrix with zeros*/
-            mat[i][k] = 0;
-        }
-
-        //print(mat);        //for matrix state
-    }
-    cout<<"matrix triangular: "<<endl;
-    print(mat, N);            //for matrix state
-    return -1;
-}
-
-// function to calculate the values of the unknowns
-void backSub(double mat[10][10+1], int N)
-{
-    double x[N];  // An array to store solution
-
-    /* Start calculating from last equation up to the
-       first */
-    for (int i = N-1; i >= 0; i--)
-    {
-        /* start with the RHS of the equation */
-        x[i] = mat[i][N];
-
-        /* Initialize j to i+1 since matrix is upper
-           triangular*/
-        for (int j=i+1; j<N; j++)
-        {
-            /* subtract all the lhs values
-             * except the coefficient of the variable
-             * whose value is being calculated */
-            x[i] -= mat[i][j]*x[j];
-        }
-
-        /* divide the RHS by the coefficient of the
-           unknown being calculated */
-        x[i] = x[i]/mat[i][i];
-    }
-
-    printf("\nSolución del sistema:\n");
-    for (int i=0; i<N; i++) {
-        cout<<"x"<<i<<" = "<< setprecision(2) << x[i]<<endl;
-    }
-    cout<<endl;
-}
-
-void linspace(double &i, double &f, int &N, bool &endpoint, vector<double> &a) {
-    if (N == 1) {
-        a.push_back(i);
-    } else if (N > 1) {
-        a.push_back(i);
-        double h;
-        h = (f - i) / (static_cast < double > (N - (endpoint ? 1 : 0)));
-
-        for (int j = 1; j < N - 1; j++) {
-            a.push_back(a.back() + h);
-        }
-
-        a.push_back(endpoint == true ? f : a.back() + h);
-    } else {
-        cout << "Debe tener al menos 1 elemento para linspace";
-    }
-}
-
-void multi_linspace(vector < double > & v, int & N, vector < double > & a) {
-    for (int i = 1; i < v.size(); i++) {
-        double dvi = v.at(i) - v.at(i - 1);
-        bool ep = true;//i == (v.size() - 1);
-        vector < double > b;
-        linspace(v.at(i - 1), v.at(i), N, ep, b);
-        a.insert(a.end(), b.begin(), b.end());
-    }
-
-}    
-
-//Fin namespace
-
+}//Fin namespace
 
