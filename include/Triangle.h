@@ -9,21 +9,23 @@ public:
     Triangle(Point &, Point &, Point &);
     Triangle();
     
-    void setE1(Point &);
-    Point getE1() const;
+    void setV1(Point &);
+    Point getV1() const;
     
-    void setE2(Point & );
-    Point getE2() const;
+    void setV2(Point & );
+    Point getV2() const;
     
-    void setE3(Point & );
-    Point getE3() const;
+    void setV3(Point & );
+    Point getV3() const;
 
     string toStr() const;
     
-private://los 3 vertices del triangulo, el E es por "edge"
-    Point E1;
-    Point E2;
-    Point E3;
+    vector<Point> getVertices();
+    
+private://los 3 vertices del triangulo, V = vertex
+    Point V1;
+    Point V2;
+    Point V3;
     
 };
 #endif

@@ -1,5 +1,7 @@
 #include "include/Triangulation.h"
 #include "FEM.cpp"
+#include "cmath"
+#include "functional"
 using namespace std;
 
 double * S2Fx(const double & x, double & y) {
@@ -20,15 +22,11 @@ double * S2Fy(double & x, const double & y) {
     return &x;
 }
 
-double g(const double &x, const double &y)
-{
-    return 4.0;    
-}
 
 int main() {
     
-    int n = 10; //number of values of x
-    int m = 10;
+    int n = 4; //number of values of x
+    int m = 4;
     
     vector < double > x_i = {
         0.0,
@@ -40,6 +38,32 @@ int main() {
         0.4
     };
     
-    solve(S2Fx, S2Fy, g, x_i, y_i, n, m);
+    function<double(const double & , const double &)> g = [](const double &x, const double &y){return 0.0;}; 
+    function<double(const double & , const double &)> p = [](const double &x, const double &y){return 1.0;}; 
+    function<double(const double & , const double &)> r = [](const double &x, const double &y){return -12.5*pow(M_PI, 2.0);}; 
+    function<double(const double & , const double &)> f = [](const double &x, const double &y){
+        return -25.0*pow(M_PI, 2.0)*sin(5.0*M_PI*x/2.0)*sin(5.0*M_PI*y/2.0);
+    };
+    function<Point(const double &)> S2 = [](const double &t)
+    {
+        Point p;
+        if(0.0<=t && t<=1.0)
+        {
+            p.setX(0.4*t);
+            p.setY(0.4);
+        }
+        if(1.0<=t && t<=2.0)
+        {
+            p.setX(0.4);
+            p.setY(0.4*(2.0-t));
+        }
+        return p;
+    };
+
+    double ta = 0.0;
+    double tb = 2.0;
+    
+    FEM fem(S2Fx, S2Fy, p, p, r, f, g, g, g, x_i, y_i, n, m, S2, ta, tb);
+    fem.solve();
     return 0;
 }

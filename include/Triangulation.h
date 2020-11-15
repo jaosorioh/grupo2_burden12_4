@@ -7,8 +7,6 @@ using namespace std;
 
 class Triangulation {
 public:
-    void linspace(double &, double &, int &, bool &, vector<double> &); 
-    void multi_linspace(vector < double > &, int &, vector < double > &);
     void loadNodes(vector<Point> &, const string &);
     void saveNodes(vector<Point> &, const string &);
     void saveTriangles(vector<Triangle> &, const string &);

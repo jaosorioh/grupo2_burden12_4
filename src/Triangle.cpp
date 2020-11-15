@@ -2,47 +2,53 @@
 
 using namespace std;
 
-Triangle::Triangle(Point & E1_, Point & E2_, Point & E3_) {
-    setE1(E1_);
-    setE2(E2_);
-    setE3(E3_);
+Triangle::Triangle(Point & V1_, Point & V2_, Point & V3_) {
+    setV1(V1_);
+    setV2(V2_);
+    setV3(V3_);
 }
 
 Triangle::Triangle(){
-    Point E1_;
-    Point E2_;
-    Point E3_;
+    Point V1_;
+    Point V2_;
+    Point V3_;
     
-    setE1(E1_);
-    setE2(E2_);
-    setE3(E3_);
+    setV1(V1_);
+    setV2(V2_);
+    setV3(V3_);
 }
 
-void Triangle::setE1(Point & E1_) {
-    E1 = E1_;
+void Triangle::setV1(Point & V1_) {
+    V1 = V1_;
 }
 
-Point Triangle::getE1() const {
-    return E1;
+Point Triangle::getV1() const {
+    return V1;
 }
 
-void Triangle::setE2(Point & E2_) {
-    E2 = E2_;
+void Triangle::setV2(Point & V2_) {
+    V2 = V2_;
 }
 
-Point Triangle::getE2() const {
-    return E2;
+Point Triangle::getV2() const {
+    return V2;
 }
 
-void Triangle::setE3(Point & E3_) {
-    E3 = E3_;
+void Triangle::setV3(Point & V3_) {
+    V3 = V3_;
 }
 
-Point Triangle::getE3() const {
-    return E3;
+Point Triangle::getV3() const {
+    return V3;
 }
 
 string Triangle::toStr() const {
-    return getE1().toStr() + " " + getE2().toStr() + " " + getE3().toStr();
+    return getV1().toStr() + " " + getV2().toStr() + " " + getV3().toStr();
 
+}
+
+vector<Point> Triangle::getVertices()
+{
+    vector<Point> vertices = {getV1(), getV2(), getV3()};
+    return vertices;
 }

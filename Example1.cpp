@@ -32,8 +32,8 @@ double g(const double &x, const double &y)
 
 int main() {
     
-    int n = 5; //number of values of x
-    int m = 5;
+    int n = 3; //number of values of x
+    int m = 3;
     vector < double > x_i = {
         0.0,
         0.2,

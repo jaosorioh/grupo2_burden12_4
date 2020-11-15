@@ -4,38 +4,6 @@
 
 using namespace std;
 
-void Triangulation::linspace(double& i, double& f, int& N, bool& endpoint, vector<double>& a)
-{
-    if (N == 1) {
-        a.push_back(i);
-    }
-    else if (N > 1) {
-        a.push_back(i);
-        double h;
-        h = (f - i) / (static_cast<double>(N - (endpoint ? 1 : 0)));
-
-        for (int j = 1; j < N - 1; j++) {
-            a.push_back(a.back() + h);
-        }
-
-        a.push_back(endpoint == true ? f : a.back() + h);
-    }
-    else {
-        cout << "Debe tener al menos 1 elemento para linspace";
-    }
-}
-
-void Triangulation::multi_linspace(vector<double>& v, int& N, vector<double>& a)
-{
-    for (int i = 1; i < v.size(); i++) {
-        double dvi = v.at(i) - v.at(i - 1);
-        bool ep = true; //i == (v.size() - 1);
-        vector<double> b;
-        linspace(v.at(i - 1), v.at(i), N, ep, b);
-        a.insert(a.end(), b.begin(), b.end());
-    }
-}
-
 void Triangulation::loadNodes(vector<Point>& nodes, const string& fname)
 {
     ifstream nodesFile(fname.c_str());
@@ -98,7 +66,7 @@ bool Triangulation::inside(const Point& p, double* (*SFx)(const double& x_, doub
 
 bool Triangulation::inside(const Triangle& t, double* (*SFx)(const double& x_, double& y_))
 {
-    return inside(t.getE1(), SFx) && inside(t.getE2(), SFx) && inside(t.getE3(), SFx);
+    return inside(t.getV1(), SFx) && inside(t.getV2(), SFx) && inside(t.getV3(), SFx);
 }
 
 bool Triangulation::onS(const Point& p, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_))
@@ -110,7 +78,7 @@ bool Triangulation::onS(const Point& p, double* (*SFx)(const double& x_, double&
 
 bool Triangulation::onS(const Triangle& t, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_))
 {
-    return (onS(t.getE1(), SFx, SFy) || onS(t.getE2(), SFx, SFy) || onS(t.getE3(), SFx, SFy));
+    return (onS(t.getV1(), SFx, SFy) || onS(t.getV2(), SFx, SFy) || onS(t.getV3(), SFx, SFy));
 }
 
 void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector<Triangle>& trianglesS2, vector<Triangle>& trianglesnotS1S2, vector<Point>& nodesS1, vector<Point>& nodesS2, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_), vector<double>& x, vector<double>& y)
