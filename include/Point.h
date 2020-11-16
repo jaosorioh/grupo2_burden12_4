@@ -19,6 +19,10 @@ public:
     string toStr() const;
     
     double length() const;
+    bool operator==(const Point & p) const
+    {
+       return (this->getX()!=p.getX() && this->getY()!=p.getY()); 
+    }
 
 private:
     double x;

@@ -14,9 +14,9 @@ public:
 
     double Integration2D(Triangle &, function<double(const double&, const double&)> &); 
 
-    double lineIntegration(function<double(const double&, const double&)> &, function<Point(const double &)> &, const double, const double);
+    double lineIntegration(function<double(const double&, const double&)> &, function<Point(const double &)> &, function<Point(const double &)> &, const double, const double);
 
-    double Gaussian_quad2D(function<double(const double&, const double&)> &, double, double, double, function<double(const double &)> &);
+    double Gaussian_quad2D(function<double(const double&, const double&)> &, double, double, function<double(const double &)> &, function<double(const double &)> &);
 
     double Simpsons_comp1D( function<double(const double &)> &, double, double );
   
@@ -24,7 +24,6 @@ public:
 private:
 
     //modifica variables 
-    void set2D_params(Triangle &T, double& a, double &b, double &c, function<double(const double&)> &yd );
     Point derivativeS(function<Point(const double & )>, const double &);
 
     //revisar como declarar esto sin que se queje el compilador 

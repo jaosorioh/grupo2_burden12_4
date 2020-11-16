@@ -21,6 +21,7 @@ public:
     string toStr() const;
     
     vector<Point> getVertices();
+    //function<double(const double&)> getDiagonalAsLine();
     
 private://los 3 vertices del triangulo, V = vertex
     Point V1;

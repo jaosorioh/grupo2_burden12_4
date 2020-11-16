@@ -1,7 +1,7 @@
 #include "../include/Triangulation.h"
 #include <fstream>
 #include <iostream>
-
+#include <algorithm>
 using namespace std;
 
 void Triangulation::loadNodes(vector<Point>& nodes, const string& fname)
@@ -81,47 +81,76 @@ bool Triangulation::onS(const Triangle& t, double* (*SFx)(const double& x_, doub
     return (onS(t.getV1(), SFx, SFy) || onS(t.getV2(), SFx, SFy) || onS(t.getV3(), SFx, SFy));
 }
 
+bool Triangulation::isTriangleAdded(Triangle& T, vector<Triangle> &Triangles)
+{
+
+    bool added = false;
+    vector<Point> NodesT = T.getVertices(); 
+    
+    for(int i = 0; i <Triangles.size(); i++)
+    {
+        vector<Point> NodesTi = Triangles[i].getVertices();
+        int coincidence = 0;
+        for(int j = 0; j < 3; j++)
+        {
+            for(int k =0; k <3; k++)
+            {
+                coincidence += (NodesTi[j].getX()==NodesT[k].getX() && NodesTi[j]==NodesT[k].getY())? 1 : 0 ;
+            }
+        }
+        if(coincidence>=3)
+        {
+            cout << coincidence;
+            added = true;
+            break;
+        }
+    }
+    return added;
+}
+
 void Triangulation::buildTrianglesAndNodes(vector<Triangle>& trianglesS1, vector<Triangle>& trianglesS2, vector<Triangle>& trianglesnotS1S2, vector<Point>& nodesS1, vector<Point>& nodesS2, double* (*SFx)(const double& x_, double& y_), double* (*SFy)(double& x_, const double& y_), vector<double>& x, vector<double>& y)
 {
-    for (int i = 0; i < x.size() - 1; i++) {
+    for (int i = 0; i < x.size(); i++) {
         Point p1(x.at(i), y.at(0));
-        Point p2(x.at(i), y.at(1));
-        Point p3(x.at(i + 1), y.at(0));
-
         nodesS1.push_back(p1);
-        if (i == x.size() - 2)
-            nodesS1.push_back(p3);
-        if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
-            Triangle t(p1, p2, p3);
-            if (inside(t, SFx))
-                trianglesS1.push_back(t);
-            p1.setXY(x.at(i + 1), y.at(1));
-            Triangle t2(p1, p2, p3);
-            if (inside(t2, SFx))
-                trianglesS1.push_back(t2);
+        if(i < x.size()-1){
+            Point p2(x.at(i), y.at(1));
+            Point p3(x.at(i + 1), y.at(0));
+
+            if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
+                Triangle t(p1, p2, p3);
+                if (inside(t, SFx))
+                    trianglesS1.push_back(t);
+                p1.setXY(x.at(i + 1), y.at(1));
+                Triangle t2(p1, p2, p3);
+                if (inside(t2, SFx))
+                    trianglesS1.push_back(t2);
+            }
         }
     }
 
-    for (int j = 0; j < y.size() - 1; j++) {
+    for (int j = 1; j < y.size(); j++) {
+        
         Point p1(x.at(0), y.at(j));
-        Point p2(x.at(1), y.at(j));
-        Point p3(x.at(0), y.at(j + 1));
+        if(j>0)
+            nodesS1.push_back(p1);
+        if(j<y.size()-1)
+        {
+            Point p2(x.at(1), y.at(j));
+            Point p3(x.at(0), y.at(j + 1));
 
-        nodesS1.push_back(p1);
-        if (j == y.size() - 2)
-            nodesS1.push_back(p3);
+            if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
+                Triangle t(p1, p2, p3);
 
-        if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
-            Triangle t(p1, p2, p3);
-
-            if (inside(t, SFx))
-                trianglesS1.push_back(t);
+                if (inside(t, SFx))
+                    trianglesS1.push_back(t);
+            }
+            p1.setXY(x.at(1), y.at(j + 1));
+            if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
+                Triangle t2(p1, p2, p3);
+                if (inside(t2, SFx))
+                    trianglesS1.push_back(t2);
         }
-        p1.setXY(x.at(1), y.at(j + 1));
-        if ((p1.getX() != p2.getX() || p1.getY() != p2.getY()) && (p1.getX() != p3.getX() || p1.getY() != p3.getY()) && (p2.getX() != p3.getX() || p2.getY() != p3.getY())) {
-            Triangle t2(p1, p2, p3);
-            if (inside(t2, SFx))
-                trianglesS1.push_back(t2);
         }
     }
 

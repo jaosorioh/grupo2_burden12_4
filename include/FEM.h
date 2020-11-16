@@ -12,7 +12,7 @@ using namespace std;
 
 class FEM {
     public:
-    FEM(double* (*)(const double&, double&), double* (*)(double&, const double&), function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, vector<double>&, vector<double>&, int& , int& , function<Point(const double &)> &, const double &, const double &);
+    FEM(double* (*)(const double&, double&), double* (*)(double&, const double&), function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, function<double(const double &, const double &)> &, vector<double>&, vector<double>&, int& , int& , function<Point(const double &)> &, function<Point(const double &)> &, const double &, const double &);
     void solve();
     
     private:
@@ -21,6 +21,7 @@ class FEM {
     void doubleIntegrals();
     void lineIntegrals();
     int findNodeIndex(Point&);
+    int findNodeIndex(Point&, vector<Point>);
     void assembleDoubleIntegrals();
     void assembleLineIntegrals();
     vector<Triangle> Triangles;
@@ -29,8 +30,9 @@ class FEM {
     
     vector<vector<double>> alpha;
     vector<double> beta;
-    vector<double> gammaS1;
-    
+    vector<double> gamma;
+    vector<double> xx;
+    vector<double> yy;
     vector<vector<vector<double>>> Z;
     vector<vector<double>> H;
     
@@ -45,6 +47,7 @@ class FEM {
     function<double(const double &, const double &)>g1;
     function<double(const double &, const double &)>g2;
     function<Point(const double &)>SE;
+    function<Point(const double &)>DSE;
     double ta;
     double tb;
     

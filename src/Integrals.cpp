@@ -22,25 +22,38 @@ OUTPUT: Valor de la integral de F(x, y) en el Triangulo
 ----------------------*/
 double Integrals::Integration2D(Triangle &Tr, function<double(const double &_x, const double &_y)> & toInt)
 {
-    double xa, xb, yc;
-    function<double(const double&)> yd; 
-    set2D_params(Tr, xa, xb, yc, yd);
-    //llamamos integrador
+    double x1, y1, x2, y2, x3, y3;
+    x1 = Tr.getV1().getX();
+    y1 = Tr.getV1().getY();
+    
+    x2 = Tr.getV2().getX();
+    
+    y2 = Tr.getV2().getY();
+    
+    x3 = Tr.getV3().getX();
+    y3 = Tr.getV3().getY();
+    
+    double m = (y3-y2)/(x3-x2);
+    double b = y2-m*x2 ;
+    
+    function<double(const double&)> yd = [&m, &b](const double&x){return m*x + b;};
+    
     double result;
-    result = Gaussian_quad2D(toInt, xa, xb, yc, yd);
+    
+    if(x1 == x2)
+    {
+        function<double(const double&)> yc = [&y3](const double &x){return y3;};
+        result = Gaussian_quad2D(toInt, x2, x3, yc, yd);
+    }
+    else
+    {
+        function<double(const double&)> yc = [&y2](const double &x){return y2;};
+        result = Gaussian_quad2D(toInt, x2, x3, yd, yc);
+        
+    }
+    
+    
     return result;
-}
-
-
-//fprime(x) = (f(x+dx) - f(x-dx)) / (2*dx);
-Point Integrals::derivativeS(function<Point(const double &t_ )> SE, const double & t)
-{
-	double dt = 1e-9;
-	Point p2 = SE(t-dt);
-	Point p1 = SE(t+dt);
-	double xprime = (p2.getX()-p1.getX())/(2*dt);
-	double yprime = (p2.getY()-p1.getY())/(2*dt);
-	return Point(xprime, yprime);
 }
 
 /*----------------------
@@ -48,12 +61,12 @@ Función que realiza integral 2D de linea sobre contorno parametrizado
 INPUTS: F(x, y) a integrar, SE(t) contorno parametrizado, valores extremos ta y tb
 OUTPUTS: double - valor de la integral de línea sobre el contorno
 ----------------------*/
-double Integrals::lineIntegration(function<double(const double &_x, const double &_y)> & toInt, function<Point(const double &t_ )> &SE, const double ta, const double tb)
+double Integrals::lineIntegration(function<double(const double &_x, const double &_y)> & toInt, function<Point(const double &t_ )> &SE, function<Point(const double &t_ )> &DSE, const double ta, const double tb)
 {
 	//Ingresar al integrador 
 	double result;
-	function<double(const double&)> f = [this, toInt, SE](const double & t){
-		double al = this->derivativeS(SE, t).length();
+	function<double(const double&)> f = [this, &toInt, &SE, &DSE](const double & t){
+		double al = DSE(t).length();
 		Point p = SE(t); 
 		return toInt(p.getX(), p.getY())*al;
 	};
@@ -69,11 +82,11 @@ INPUTS: función 2D (integrando), límites a y b númericos, límites funcionale
 OUTPUT: aproximación númerica al valor de la integral en el intervalo dado
 -----------------------*/ 
 double Integrals::Gaussian_quad2D(function<double(const double &_x, const double &_y)> & Function,
-				double a, double b, double c, function<double(const double &yy_)> & Fd)
+				double a, double b, function<double(const double &yy_)> & Fc, function<double(const double &yy_)> & Fd)
 {
 	int m = 5 - 1;
 	int n = 5 - 1; 
-	double x, y, d1, k1, k2, JX, Q;
+	double x, y, c1, d1, k1, k2, JX, Q;
 
 	double h1 = (b-a)/2.0;
 	double h2 = (b+a)/2.0;
@@ -84,9 +97,10 @@ double Integrals::Gaussian_quad2D(function<double(const double &_x, const double
 	{
 		JX = 0;
 		x = h1*r_ij[m][i] + h2;
+        c1 = Fc(x);
 		d1 = Fd(x);
-		k1 = (d1 - c)/2.0;
-		k2 = (d1 + c)/2.0;
+		k1 = (d1 - c1)/2.0;
+		k2 = (d1 + c1)/2.0;
 
 		for ( int j = 0; j<=n; j++)
 		{
@@ -101,48 +115,6 @@ double Integrals::Gaussian_quad2D(function<double(const double &_x, const double
 	J = h1*J;
 
 	return J;
-}
-
-
-/*----------------------
-Función que establece los límites de integración 2D basados en el triangulo dado
-INPUTS: vertices x1,y1 x2,y2 x3,y3 del triangulo 
-OUTPUT: Ninguno - establece en variables privadas los límites
-------------------------*/
-void Integrals::set2D_params(Triangle &Tr, double& a, double &b, double &c, function<double(const double&)> &yd )
-{
-	double x2, x3, y2, y3;
-	x2 = Tr.getV2().getX();
-	y2 = Tr.getV2().getY();
-	x3 = Tr.getV3().getX();
-	y3 = Tr.getV3().getY();
-	
-	double d;
-	if(x3 > x2)
-	{
-		a = x2;
-		b = x3;
-	}
-	
-	else
-	{
-		a = x3;
-		b = x2;
-	}
-	
-	if (y3 > y2)
-	{
-		c = y2;
-		d = y3;
-	}
-	else{
-		c = y3;
-		d = y2;
-	}
-	
-	
-	yd = [&a, &b, &c, &d](const double & x) { double m = (d-c)/(b-a); double b = c - m*a; return m*x + b; };
-
 }
 
 /*---------------------

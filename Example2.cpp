@@ -25,8 +25,8 @@ double * S2Fy(double & x, const double & y) {
 
 int main() {
     
-    int n = 4; //number of values of x
-    int m = 4;
+    int n = 5; //number of values of x
+    int m = 5;
     
     vector < double > x_i = {
         0.0,
@@ -59,11 +59,27 @@ int main() {
         }
         return p;
     };
+    
+    function<Point(const double &)> DS2 = [](const double &t)
+    {
+        Point p;
+        if(0.0<=t && t<=1.0)
+        {
+            p.setX(0.4);
+            p.setY(0.0);
+        }
+        if(1.0<=t && t<=2.0)
+        {
+            p.setX(0.0);
+            p.setY(-0.4);
+        }
+        return p;
+    };
 
     double ta = 0.0;
     double tb = 2.0;
     
-    FEM fem(S2Fx, S2Fy, p, p, r, f, g, g, g, x_i, y_i, n, m, S2, ta, tb);
+    FEM fem(S2Fx, S2Fy, p, p, r, f, g, g, g, x_i, y_i, n, m, S2, DS2, ta, tb);
     fem.solve();
     return 0;
 }
