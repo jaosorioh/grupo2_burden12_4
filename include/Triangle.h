@@ -21,12 +21,15 @@ public:
     string toStr() const;
     
     vector<Point> getVertices();
-    //function<double(const double&)> getDiagonalAsLine();
+    
+    double getArea() const;
+    void setArea(double);//se usa en la integracion
     
 private://los 3 vertices del triangulo, V = vertex
     Point V1;
     Point V2;
     Point V3;
+    double Area;
     
 };
 #endif

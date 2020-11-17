@@ -45,7 +45,7 @@ void Point::setXY(double x_, double y_)
 Metodo que toma la coordenada (x, y) y lo convierte en un formato de string leible.
 INPUTS: 
 OUTPUT: string donde se separa las coordenadas por " ".
------------------------*/ 
+-----------------------*/
 string Point::toStr() const
 {
     return std::to_string(getX()) + " " + std::to_string(getY());
