@@ -158,6 +158,7 @@ void FEM::coefABC()
     }
 }
 
+//Step 4
 void FEM::doubleIntegrals(){
     
     for(int i = 0; i<M; i++)
@@ -183,7 +184,7 @@ void FEM::doubleIntegrals(){
     
 }
 
-//step 5-Nicole
+//Step 5
 void FEM::lineIntegrals(){
     for(int i = K; i<N; i++)
     {
@@ -239,7 +240,8 @@ void FEM::assembleDoubleIntegrals()
         vector<Point> Nodesi = Triangles[i].getVertices(); //Los 3 Nodos del triángulo i
         
         //Paso 7: correr k = 1,2,3 (En nuestro caso 0,1,2)
-        for (int k = 0; k < 3; k++) {
+        for (int k = 0; k < 3; k++) 
+        {
             //Paso 8: Encontramos el indice l en la lista de todos los nodos en S1US2
             int l = findNodeIndex(Nodesi[k]);
             //Paso 9:
@@ -250,7 +252,8 @@ void FEM::assembleDoubleIntegrals()
                     int t = findNodeIndex(Nodesi[j]);
                     //Paso 11:
                     
-                    if (l < n) {
+                    if (l < n) //l<=n 
+                    {
                         if (t < n) {                             
                             alpha[l][t] = alpha[l][t] + Z[i][k][j];
                             alpha[t][l] = alpha[t][l] + Z[i][k][j];
