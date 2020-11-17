@@ -8,21 +8,17 @@ using namespace std;
 
 class Point {
 public:
-    Point(double=0.0, double=0.0);//constructor
+    Point(double = 0.0, double = 0.0); //constructor
     void setX(double);
     double getX() const;
-    
+
     void setY(double);
     double getY() const;
 
     void setXY(double, double);
     string toStr() const;
-    
-    double length() const;
-    bool operator==(const Point & p) const
-    {
-       return (this->getX()!=p.getX() && this->getY()!=p.getY()); 
-    }
+
+    double length() const; //para la derivada de curva parametrica
 
 private:
     double x;

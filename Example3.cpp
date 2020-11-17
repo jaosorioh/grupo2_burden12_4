@@ -1,5 +1,5 @@
 #include "include/Triangulation.h"
-#include "FEM.cpp"
+#include "include/FEM.h"
 using namespace std;
 
 double * S2Fx(const double & x, double & y) {
@@ -23,8 +23,8 @@ double * S2Fy(double & x, const double & y) {
 
 int main() {
     
-    int n = 3; //number of values of x
-    int m = 3;
+    int n = 4; //number of values of x
+    int m = 4;
     vector < double > x_i = {
         0.0,
         0.5
@@ -73,8 +73,6 @@ int main() {
         return p;
     };
     
-    Point pp(0.5, 0.5);
-    cout << "length: " << pp.length();
     double ta = 0.0;
     double tb = 1.0;
     
