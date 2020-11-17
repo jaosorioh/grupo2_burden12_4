@@ -1,5 +1,5 @@
 /*
-Implementación de la clase Integration
+Implementación de la clase Integrals
 */
 
 #include <iostream>
@@ -52,7 +52,7 @@ double Integrals::Integration2D(Triangle& Tr, function<double(const double& _x, 
 
 /*----------------------
 Función que realiza integral 2D de linea sobre contorno parametrizado
-INPUTS: F(x, y) a integrar, SE(t) contorno parametrizado, valores extremos ta y tb
+INPUTS: F(x, y) a integrar, SE(t) contorno parametrizado, derivada del contorno DSE,valores extremos ta y tb
 OUTPUTS: double - valor de la integral de línea sobre el contorno
 ----------------------*/
 double Integrals::lineIntegration(function<double(const double& _x, const double& _y)>& toInt, function<Point(const double& t_)>& SE, function<Point(const double& t_)>& DSE, const double ta, const double tb)
@@ -72,7 +72,7 @@ double Integrals::lineIntegration(function<double(const double& _x, const double
 
 /* ---------------------
 Integrador 2D usando el método cuadratura Gaussiana
-INPUTS: función 2D (integrando), límites a y b númericos, límites funcionales c y d
+INPUTS: función 2D (integrando), límites a, b, c y límite funcional d
 OUTPUT: aproximación númerica al valor de la integral en el intervalo dado
 -----------------------*/
 double Integrals::Gaussian_quad2D(function<double(const double& _x, const double& _y)>& Function,

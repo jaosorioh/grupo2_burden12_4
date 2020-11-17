@@ -14,11 +14,7 @@ public:
     //Funcion para resolver determinante:
     double det(vector<vector<double> >& matrix);
 
-    //#### Funcion para resolver sistema lineal (Solo hay que implementar gaussianElimination):
-
-    // Función principal, soluciona AC = B: para obtener el contenido de la matriz y llamar las otras funciones
-    //INPUT: Matriz A NxN y vector B de tamaño N
-    //OUTPUT: Vector solución C de tamaño N
+    //función principal
     vector<double> gaussianElimination(vector<vector<double> > A, vector<double> B);
 
     void multi_linspace(vector<double>&, int&, vector<double>&);
@@ -38,8 +34,6 @@ private:
 
     // función para llenar matriz del sistema AC = B con los vectores A y B (el sistema es una matriz con la última columna el lado derecho de la ecuación)
     vector<vector<double> > fillSystem(vector<vector<double> > A, vector<double> B);
-
-    //#########################################
 
 };
 

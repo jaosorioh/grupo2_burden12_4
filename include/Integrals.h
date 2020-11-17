@@ -11,6 +11,8 @@ class Integrals {
 public:
     Integrals(void); //constructor
 
+    //Se implementa únicamente Integration2D o lineIntegration para resolver las integrales
+    
     double Integration2D(Triangle&, function<double(const double&, const double&)>&);
 
     double lineIntegration(function<double(const double&, const double&)>&, function<Point(const double&)>&, function<Point(const double&)>&, const double, const double);
@@ -21,7 +23,7 @@ private:
     Point derivativeS(function<Point(const double&)>, const double&);
     double Gaussian_quad2D(function<double(const double&, const double&)>&, double, double, double, function<double(const double&)>&);
     
-    //revisar como declarar esto sin que se queje el compilador
+    //variables para Gaussian_quad2D
     const double r_ij[5][5] = {
         { 0.0, 0.0, 0.0, 0.0, 0.0 },
         // Roots n=2
