@@ -8,12 +8,13 @@
 using namespace std;
 
 class linearalgebra {
-    // ######### DECLARACIÓN DE FUNCIONES ############## //
+    
 public:
-    //#### Funcion para resolver determinante:
+    
+    //Funcion para resolver determinante:
     double det(vector<vector<double> >& matrix);
 
-    //#### Funciones para resolver sistema lineal (Solo hay que implementar gaussianElimination):
+    //#### Funcion para resolver sistema lineal (Solo hay que implementar gaussianElimination):
 
     // Función principal, soluciona AC = B: para obtener el contenido de la matriz y llamar las otras funciones
     //INPUT: Matriz A NxN y vector B de tamaño N
@@ -40,6 +41,6 @@ private:
 
     //#########################################
 
-}; //Fin namespace
+};
 
 #endif
