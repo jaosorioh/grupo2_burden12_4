@@ -25,6 +25,11 @@ double linearalgebra::det(vector<vector<double> >& matrix)
         + matrix[2][0] * (matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]));
 }
 
+/*
+función principal GaussianElimination - soluciona AC = B: para obtener el contenido de la matriz y llamar las otras funciones
+INPUT: Matriz A NxN y vector B de tamaño N
+OUTPUT: Vector solución C de tamaño N
+*/
 vector<double> linearalgebra::gaussianElimination(vector<vector<double> > A, vector<double> B)
 {
     vector<vector<double> > mat = fillSystem(A, B);

@@ -1,3 +1,6 @@
+/*
+main correspondiente al ejemplo de una placa 
+*/
 
 #include "include/FEM.h"
 #include "cmath"

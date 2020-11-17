@@ -3,9 +3,13 @@
 #include <iomanip>
 using namespace std;
 
+/*
+El constructor recibe toda la información del usuario sobre el problema e inicia la triangulación
+INPUTS: funciones S2x, S2y, p, q, r, f, g, g1, g2, vectores x_i, y_i, números N, M, contorno parametrizado SE, DSE (derivada), puntos extremos ta,tb 
+*/
 FEM::FEM(double* (*S2Fx_)(const double& x, double& y), double* (*S2Fy_)(double& x, const double& y), function<double(const double& x_, const double& y_)>& p_, function<double(const double& x_, const double& y_)>& q_, function<double(const double& x_, const double& _y)>& r_, function<double(const double& x_, const double& y_)>& f_, function<double(const double& x_, const double& y_)>& g_, function<double(const double& x_, const double& y_)>& g1_, function<double(const double& x_, const double& y_)>& g2_, vector<double>& x_i, vector<double>& y_i, int& N_, int& M_, function<Point(const double& t_)>& SE_, function<Point(const double& t_)>& DSE_, const double& ta_, const double& tb_)
 {
-    //---------------STEP # 1 ---------------
+    //---------------STEP 0 ---------------
     vector<Triangle> trianglesnotS1S2;
     vector<Triangle> trianglesS2;
     vector<Triangle> trianglesS1;
@@ -200,7 +204,8 @@ int FEM::findNodeIndex(Point& p, vector<Point> nd)
 
 /* Función del paso 6-12
 INPUT: Vector de triángulos que alberga todos los triángulos, vector de nodos en S2, alfa, beta, gamma, Z, H.
-OUTPUT: vacía, solo llena los alfa y beta */
+OUTPUT: vacía, solo llena los alfa y beta 
+*/
 void FEM::assembleDoubleIntegrals()
 {
     for (int i = 0; i < M; i++) {
@@ -242,10 +247,12 @@ void FEM::assembleDoubleIntegrals()
     }
 
 } //Fin :D
+
 //---------------STEP 13---------------
 /* Función del paso 13-19
 INPUT: Los triángulos que tienen  al menos un nodo en S2, alfa, beta, gamma, J, I.
-OUTPUT: vacía, solo llena los alfa y beta */
+OUTPUT: vacía, solo llena los alfa y beta 
+*/
 void FEM::assembleLineIntegrals()
 {
     //Paso 13: correr sobre los triangulos con al menos un edge en S2
@@ -291,6 +298,7 @@ void FEM::assembleLineIntegrals()
 
 } //Fin :D
 
+//función que soluciona usando todos los pasos 
 void FEM::solve()
 {
     coefABC();

@@ -1,3 +1,7 @@
+/*
+main correspondiente al ejemplo de la temperatura desarrollado en el Burden
+*/
+
 #include "include/Triangulation.h"
 #include "include/FEM.h"
 using namespace std;

@@ -1,3 +1,7 @@
+/*
+main correspondiente al ejercicio 1 del burden (el triangulo)
+*/
+
 #include "include/Triangulation.h"
 #include "include/FEM.h"
 using namespace std;
